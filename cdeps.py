@@ -3,15 +3,16 @@ import sys
 import re
 import os.path
 import argparse
+import io
 
 class Dep(object):
-    def __init__(self, fn, path=None, sys=False):
+    def __init__(self, fn, path=None, sysinc=False):
         if path:
             self.path = path
         else:
             self.path = ''
         self.deps = []
-        if sys:
+        if sysinc:
             self.incre = re.compile(r'#\s*include\s*["<](.*)[">]')
         else:
             self.incre = re.compile(r'#\s*include\s*["](.*)["]')
@@ -20,12 +21,12 @@ class Dep(object):
     def open(self, fn):
         try:
             org = fn
-            f = file(fn)
+            f = io.open(fn, encoding='utf-8', errors='replace')
         except:
             for p in self.path.split(os.path.pathsep):
                 try:
                     fn = os.path.sep.join([p, org])
-                    f = file(fn)
+                    f = io.open(fn, encoding='utf-8', errors='replace')
                     return f
                 except Exception:
                     pass
@@ -35,7 +36,8 @@ class Dep(object):
     def dep(self, fn):
         try:
             f = self.open(fn)
-        except:
+        except Exception as e:
+            sys.stderr.write('exception: {}\n'.format(e))
             return False
         try:
             for l in f:
@@ -76,10 +78,8 @@ class MyFormatter(RawDescription, ArgDefaults):
     pass
 
 def parseopt():
-    version = '%(prog)s version 0.98.23'
     parser = argparse.ArgumentParser(
         formatter_class=MyFormatter,
-        version=version,
         description=description,
         epilog=epilog
     )
@@ -95,14 +95,13 @@ def parseopt():
 def main():
     ap = parseopt()
     args = ap.parse_args()
-    d = Dep(args.filename, path=args.path, sys=args.system_includes)
+    d = Dep(args.filename, path=args.path, sysinc=args.system_includes)
     ext = args.object_file_extension
     stem = os.path.splitext(args.filename)[0]
     target = '{}.{}'.format(stem, ext)
-    print target, ':', ' '.join(d.deps)
+    sys.stdout.write('{}: {}\n'.format(target, ' '.join(d.deps)))
     for n in d.deps:
-        print
-        print n, ':'
+        sys.stdout.write('\n{}:\n'.format(n))
 
 if __name__ == '__main__':
     main()
