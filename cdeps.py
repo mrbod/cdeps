@@ -99,9 +99,9 @@ def main():
     ext = args.object_file_extension
     stem = os.path.splitext(args.filename)[0]
     target = '{}.{}'.format(stem, ext)
-    sys.stdout.write('{}: {}\n'.format(target, ' '.join(d.deps)))
+    sys.stdout.write('{}: {}\n\n'.format(target, ' '.join(d.deps)))
     for n in d.deps:
-        sys.stdout.write('\n{}:\n'.format(n))
+        sys.stdout.write('{}:\n\n'.format(n))
 
 if __name__ == '__main__':
     main()
