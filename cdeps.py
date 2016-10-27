@@ -53,8 +53,8 @@ class Dep(object):
 description = 'Outputs header file dependencies suitable for makefile inclusion.'
 
 epilog = '''
-By default only includes following the '#include "foo.h"' pattern are are
-output. Use the --system-includes to also output '#include <bar.h>' includes.
+By default only includes following the '#include "foo.h"' pattern are output.
+Specify --system-includes to also output '#include <bar.h>' includes.
 
 Example:
 %(prog)s main.c
