@@ -27,7 +27,7 @@ class Dep(object):
                     fn = os.path.sep.join([p, org])
                     f = file(fn)
                     return f
-                except Exception, e:
+                except Exception:
                     pass
             raise
         return f
